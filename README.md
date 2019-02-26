@@ -25,6 +25,41 @@ You will build the solution from scratch, no starter code is provided. Feel free
 
 ### After we cover the lecture on **sessions** and **cookies**, use them to keep a record of logged in users across requests.
 
+## Notes for self
+
+To implement sessions, I had to:
+
+1. yarn add express-session, a middleware that allows storing of sessions, and yarn add connect-session-knex, a middleware that allows connecting a session to the database (managed by knex)
+2. I declared a variable KnexSessionStore, imported connect-session-knex, and curried the session variable from express-session into it. 
+3. I set up my sessionConfig and a new KnexSessionStore in my sessionConfig.
+Looked like this:
+
+const sessionConfig = {
+    name: 'delectable',
+    secret: 'find out what is even going on',
+    cookie: {
+        maxAge: 1000 * 60 * 120,
+        secure: false // it's fine to use over http for dev
+    },
+    httpOnly: true, //no peeking into it from JS console
+    resave: false,
+    saveUninitialized: false,
+
+    store: new KnexSessionStore({
+        knex: dbconfig,
+        tablename: 'sessions',
+        sidfieldname: 'sid',
+        createtable: true,
+        clearInterval: 1000 * 60 * 120,
+    })
+}
+
+4. Made sure to server.use(session(sessionConfig))
+5. After a user registers, I save the id of the user into req.session.user. Not clear on if this is necessary.
+6. At login, I save the user info into req.session.user if the user and pw pass. 
+7. I set up a way to logout, with a GET request to the endpoint. This uses req.session.destroy, which contains a callback for any potential errors. 
+
+
 
 ## Stretch Problem
 
