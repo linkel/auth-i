@@ -61,7 +61,7 @@ server.post('/api/login', (req, res) => {
         .then(info => {
             if (info && bcrypt.compareSync(user.password, info.password)) {
                 req.session.user = user;
-                res.status(200).json({message: `Welcome ${info.username}`})
+                res.status(200).json({cookie: req.session.cookie})
             } else {
                 res.status(401).json({message: "Invalid credentials"})
             }
