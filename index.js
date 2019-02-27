@@ -30,7 +30,13 @@ const sessionConfig = {
 
 server.use(helmet());
 server.use(express.json());
-server.use(cors());
+server.use(cors( // this enables the cookie-keeping
+    {
+        credentials : true,
+        origin : true,
+    }
+));
+
 server.use(session(sessionConfig));
 
 server.get('/', (req, res) => {
